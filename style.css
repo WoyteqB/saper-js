@@ -1,0 +1,41 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+main,
+header{
+    display: flex;
+    justify-content: center;
+}
+header{
+    text-align: center;
+    padding: 20px;
+}
+header h1{
+    margin-bottom: 20px;
+}
+button.game-start{
+    padding: 10px 20px;
+    border: 1px solid darkorange;
+    background-color: orange;
+    color: #fff;
+    font-size: 30px;
+    font-weight: 500;
+}
+.game-board{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+}
+.game-board button{
+    height: 40px;
+    width: 40px;
+    border-radius: none;
+    border: 1px solid #999;
+    background-color: #eee;
+    display: inline-block;
+    cursor: pointer;
+}
+.game-board button:hover{
+    background-color: #ccc;
+}
