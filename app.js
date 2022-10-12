@@ -18,8 +18,8 @@ let FindIndexByPosition = (row, column) =>{
 }
 
 let countNearBombs = (row, column) => {
-    if(playground.values){
-        
+    let count = 0;
+    if(playground.values[FindIndexByPosition( row, column)].bomb === false ){
     }
 }
 
