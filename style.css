@@ -25,17 +25,36 @@ button.game-start{
 }
 .game-board{
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    /* grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr; */
 }
 .game-board button{
     height: 40px;
     width: 40px;
     border-radius: none;
     border: 1px solid #999;
-    background-color: #eee;
+    background-color: #ccc;
     display: inline-block;
     cursor: pointer;
 }
 .game-board button:hover{
     background-color: #ccc;
+}
+.game-board button.locked,
+.game-board button.locked:hover{
+    background-color:orange;
+}
+.game-board button.no-clicked,
+.game-board button.no-clicked:hover{
+    background-color: lightskyblue;
+}
+.game-board button.clicked-bomb,
+.game-board button.clicked-bomb:hover{
+    background-color: red;
+}
+.game-board button.picked{
+    background-color: #eee;
+}
+.game-board button.picked:hover{
+    background-color: #eee;
+    cursor: auto;
 }
