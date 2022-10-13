@@ -1,5 +1,6 @@
 const gameStart = document.querySelector(".game-start");
 const gamePlayground = document.querySelector(".game-board");
+const bombStay = document.querySelector(".bomb-stay span");
 
 let playground;
 
@@ -7,6 +8,8 @@ let playgroundReset = () => {
     playground = {
         rows: 0,
         columns: 0,
+        bombs: 0,
+        win: false,
         values: []
     }
 }
@@ -31,6 +34,11 @@ let countNearBombs = (row, column) => {
 
 }
 
+let countCheckedBombs = () =>{
+    console.log(playground.bombs);
+    return playground.values.filter(el => el.locked === true).length;
+}
+
 let gameInit = (rows, columns) => {
     playgroundReset();
     playground.rows = rows;
@@ -49,9 +57,10 @@ let gameInit = (rows, columns) => {
             })
         }
     }
-    let level = (rows*columns)/5;
+    playground.bombs = Math.floor((rows*columns)/10);
+    bombStay.innerHTML = playground.bombs;
 
-    for(let i = 0; i<= level; i++){
+    for(let i = 0; i< playground.bombs; i++){
         let randomRow = Math.floor(Math.random()*rows);
         let randomColumn = Math.floor(Math.random()*columns);
         playground.values[FindIndexByPosition( randomRow, randomColumn)].bomb = true;
@@ -66,7 +75,13 @@ let gameInit = (rows, columns) => {
 
 
 }
-
+let youWon = (gameField) =>{
+    let countPickedFields = playground.values.filter(el => el.picked === true).length;
+    if(countPickedFields === (gameField.columns * gameField.rows) - gameField.bombs){
+        gameField.win = true;
+        console.log("Wygrałeś");
+    }
+}
 let youLose = (gameField) =>{
     gamePlayground.innerHTML ="";
     for(let i = 0; i< gameField.rows; i++){
@@ -99,36 +114,50 @@ let youLose = (gameField) =>{
 
 let fieldPrint = (gameField) => {
     gamePlayground.innerHTML ="";
+    bombStay.innerHTML = gameField.bombs - countCheckedBombs();
+    youWon(gameField);
     for(let i = 0; i< gameField.rows; i++){
         for(let j = 0; j< gameField.columns; j++){
             let buttonField = document.createElement("button");
             let currentField = playground.values[FindIndexByPosition( i, j)];
             buttonField.className = i;
             if(currentField.picked === false){
-                if(currentField.locked === false){
-                    buttonField.addEventListener("click", ()=> {
-                        //console.log("clicked "+i+" "+j);
-                        if(currentField.bomb === true){
-                            currentField.picked = true;
-                            youLose(gameField);
-                        }else{
-                            currentField.picked = true;
-                            fieldPrint(gameField);
-                        }
-                    });
-                }else{
-                    buttonField.innerText = "?";
-                    buttonField.className = "locked";
+                if(gameField.win === false){
+                    if(currentField.locked === false){
+                        buttonField.addEventListener("click", ()=> {
+                            //console.log("clicked "+i+" "+j);
+                            if(currentField.bomb === true){
+                                currentField.picked = true;
+                                youLose(gameField);
+                            }else{
+                                currentField.picked = true;
+                                fieldPrint(gameField);
+                            }
+                        });
+                    }else{
+                        buttonField.innerText = "?";
+                        buttonField.className = "locked";
+                    }
                 }
-                buttonField.addEventListener("mousedown", (e)=>{
-                    if(e.button === 2){
-                        currentField.locked = !currentField.locked;
-                        fieldPrint(gameField);
-                    };
-                })
+                if(gameField.win === false){
+                    buttonField.addEventListener("mousedown", (e)=>{
+                        if(e.button === 2){
+                            if(currentField.locked === true){
+                                currentField.locked = false;
+                            }else if((gameField.bombs - countCheckedBombs())>=0 && currentField.locked === false){
+                                currentField.locked = true;
+                            }
+                            
+                            fieldPrint(gameField);
+                        };
+                    })
+                }
             }else{
                 buttonField.innerText = currentField.bombClose?currentField.bombClose:"";
                 buttonField.className = "picked";
+            }
+            if(gameField.win===true && currentField.bomb === true){
+                buttonField.innerHTML = `<i class="fa fa-bomb" aria-hidden="true"></i>`;
             }
             // if(currentField.bomb == true){
             //     buttonField.innerText="X"
