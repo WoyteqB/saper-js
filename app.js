@@ -34,8 +34,64 @@ let countNearBombs = (row, column) => {
 
 }
 
+
+let findEmptyFields = (row, column) =>{
+    let startElement = playground.values[FindIndexByPosition( row, column)];
+    let emptyFields = [startElement];
+    //startElement.picked = true;
+
+    //emptyFields.forEach(el => playground.values[FindIndexByPosition( el.row, el.column)].picked = true)
+    //console.log(emptyFields);
+    console.log("Kliknieto w pole "+row+", "+column);
+    if(playground.values[FindIndexByPosition( row, column)].bomb === false && playground.values[FindIndexByPosition( row, column)].bombClose === 0){
+        emptyFields = findEmpty(emptyFields);
+    }
+    //emptyFields.forEach(el => playground.values[FindIndexByPosition( el.row, el.column)].picked = true);
+    //console.log(emptyFields);
+    //return emptyFields;
+
+
+    // if(playground.values[FindIndexByPosition( row, column)].bomb === false && playground.values[FindIndexByPosition( row, column)].bombClose === 0){
+    //     let wynik = playground.values.filter(el => el.row >= row-1 && el.row <= row+1 && el.column >= column -1 && el.column <= column+1);
+    //     console.log("Lista pustych pol w sąsiectwie pustego pola "+row+", "+column);
+    //     console.log(wynik);
+    //     //wynik = wynik.concat(findEmpty(wynik));
+    //     //console.log(wynik);
+    //     //console.log("nie ma bomby")
+    //     console.log("Lista pustych pol w sąsiectwie");
+    //     console.log(wynik);
+    //     return wynik;
+    // }
+}
+
+let findEmpty = (list) =>{
+    let newList = [];
+    
+    
+    //console.log(newList.filter( el => el.picked === false).length);
+    //console.log(newList);
+
+    list.forEach(element => {
+        element.picked =true;
+        
+        if(element.bombClose === 0){
+            newList = newList.concat(playground.values.filter(el => el.row >= element.row-1 && el.row <= element.row+1 && el.column >= element.column -1 && el.column <= element.column+1));
+            newList.forEach( el => el.bombClose !== 0?el.picked=true:el.bomb=true);
+            //console.log(playground.values.filter(el => el.row >= element.row-1 && el.row <= element.row+1 && el.column >= element.column -1 && el.column <= element.column+1));
+        }else{
+            element.picked = true;
+            console(element);
+        }
+        
+    });
+    console.log(newList);
+    
+    return newList;
+    
+}
+
 let countCheckedBombs = () =>{
-    console.log(playground.bombs);
+    //console.log(playground.bombs);
     return playground.values.filter(el => el.locked === true).length;
 }
 
@@ -63,10 +119,16 @@ let gameInit = (rows, columns) => {
     for(let i = 0; i< playground.bombs; i++){
         let randomRow = Math.floor(Math.random()*rows);
         let randomColumn = Math.floor(Math.random()*columns);
-        playground.values[FindIndexByPosition( randomRow, randomColumn)].bomb = true;
-        //console.log("Losowanie: "+randomRow+ ", "+ randomColumn);
+        if(playground.values[FindIndexByPosition( randomRow, randomColumn)].bomb === true){
+            i--;
+        }else{
+            playground.values[FindIndexByPosition( randomRow, randomColumn)].bomb = true;
+            //console.log("Losowanie: "+randomRow+ ", "+ randomColumn);
+        }
     }
-
+    // playground.bombs = playground.values.filter(el => el.bomb === true).length;
+    // bombStay.innerHTML = playground.bombs;
+    
     for(let i = 0; i < rows; i++){
         for(let j = 0; j < columns; j++){
             playground.values[FindIndexByPosition( i, j)].bombClose = countNearBombs(i,j)!==undefined?countNearBombs(i,j):"";
@@ -130,7 +192,11 @@ let fieldPrint = (gameField) => {
                                 currentField.picked = true;
                                 youLose(gameField);
                             }else{
-                                currentField.picked = true;
+                                if(currentField.bombClose !== 0){ 
+                                    currentField.picked = true;
+                                }else{
+                                    findEmptyFields(currentField.row, currentField.column);//.forEach(el => playground.values[FindIndexByPosition( el.row, el.column)].picked = true);
+                                }
                                 fieldPrint(gameField);
                             }
                         });
@@ -188,3 +254,25 @@ gamePlayground.addEventListener("contextmenu", function(e)
 {
     e.preventDefault();
 });
+
+let arr1 = [
+    {
+        name: "Wojtek",
+        age: 39
+    },
+    {
+        name: "Jurek",
+        age: 39
+    },
+    {
+        name: "Marek",
+        age: 38
+    }
+]
+let arr = [];
+
+arr = arr1.filter(el => el.age === 39);
+arr[0].name = "Wojciech";
+
+console.log(arr);
+console.log(arr1);
