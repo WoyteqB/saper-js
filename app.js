@@ -1,9 +1,11 @@
-const gameStart = document.querySelector(".game-start");
+const gameStart = document.querySelector(".modal-container .game-start");
+const gameReset = document.querySelector("header .game-reset");
+const newGame = document.querySelector("header .game-new");
+const gameStartModal = document.querySelector(".modal-container.game-start");
 const gamePlayground = document.querySelector(".game-board");
 const bombStay = document.querySelector(".bomb-stay span");
 
 let playground;
-
 let playgroundReset = () => {
     playground = {
         rows: 0,
@@ -14,10 +16,7 @@ let playgroundReset = () => {
     }
 }
 
-gameStart.addEventListener("click", ()=>{
-    gameInit(10,10);
-    fieldGenerator(playground);
-})
+
 
 let FindIndexByPosition = (row, column) =>{
     return playground.values.findIndex( el => el.row === row && el.column === column);
@@ -72,19 +71,37 @@ let findEmpty = (list) =>{
     //console.log(newList);
 
     list.forEach(element => {
-        element.picked =true;
+        element.picked = true;
         
         if(element.bombClose === 0){
-            newList = newList.concat(playground.values.filter(el => el.row >= element.row-1 && el.row <= element.row+1 && el.column >= element.column -1 && el.column <= element.column+1));
-            newList.forEach( el => el.bombClose !== 0?el.picked=true:el.bomb=true);
+            newList = newList
+                        .concat(playground.values
+                            .filter(el =>   
+                                el.row >= element.row-1 && 
+                                el.row <= element.row+1 && 
+                                el.column >= element.column -1 
+                                && el.column <= element.column+1
+                            )).filter( el => 
+                                el.picked !== true
+                            );
+            //newList = newList.filter( el => el.picked !== true);
+            //console.log(newList);
+            newList.forEach( el => {
+                //?:findEmpty()
+                if(el.bombClose !== 0){
+                    el.picked=true;
+                }else{
+                    findEmpty(newList);
+                }
+            });
             //console.log(playground.values.filter(el => el.row >= element.row-1 && el.row <= element.row+1 && el.column >= element.column -1 && el.column <= element.column+1));
         }else{
             element.picked = true;
-            console(element);
+            //console.log(element);
         }
         
     });
-    console.log(newList);
+    //console.log(newList);
     
     return newList;
     
@@ -95,7 +112,7 @@ let countCheckedBombs = () =>{
     return playground.values.filter(el => el.locked === true).length;
 }
 
-let gameInit = (rows, columns) => {
+let gameInit = (rows, columns, level) => {
     playgroundReset();
     playground.rows = rows;
     playground.columns = columns;
@@ -113,7 +130,7 @@ let gameInit = (rows, columns) => {
             })
         }
     }
-    playground.bombs = Math.floor((rows*columns)/10);
+    playground.bombs = Math.floor((rows*columns)/level);
     bombStay.innerHTML = playground.bombs;
 
     for(let i = 0; i< playground.bombs; i++){
@@ -143,6 +160,7 @@ let youWon = (gameField) =>{
         gameField.win = true;
         console.log("Wygrałeś");
     }
+    //if(gameField.values.filter(el=>el.locked ===true &&el.bomb === true).length === gameField.bombs) gameField.win = true;
 }
 let youLose = (gameField) =>{
     gamePlayground.innerHTML ="";
@@ -161,7 +179,7 @@ let youLose = (gameField) =>{
             if(currentField.bomb === true){
                 buttonField.innerHTML = `<i class="fa fa-bomb" aria-hidden="true"></i>`;            
             }else if(currentField.picked === true){
-                buttonField.innerText = currentField.bombClose; 
+                buttonField.innerText = currentField.bombClose === 0?"":currentField.bombClose; 
                 buttonField.className = "picked";
             }
             // if(currentField.bomb == true){
@@ -220,7 +238,7 @@ let fieldPrint = (gameField) => {
                 }
             }else{
                 buttonField.innerText = currentField.bombClose?currentField.bombClose:"";
-                buttonField.className = "picked";
+                buttonField.className = `picked near-bomb-${currentField.bombClose}`;
             }
             if(gameField.win===true && currentField.bomb === true){
                 buttonField.innerHTML = `<i class="fa fa-bomb" aria-hidden="true"></i>`;
@@ -246,33 +264,46 @@ let fieldGenerator = ( gameField) =>{
     //console.log(gameField.rows + " " + gameField.columns);
     fieldPrint(gameField);
 }
+let gameLevel = "easy";
+let gameLevelButtons = document.querySelectorAll(".game-start .levels button");
+gameLevelButtons.forEach(level => level.addEventListener("click", ()=>{
+    gameLevelButtons.forEach(btn => btn.classList.remove("picked"));
+    let lev = level.className;
+    gameLevel = level.className;
+    level.classList.add("picked");
+}))
 
-gameInit(10,10);
+let gameInitLevel = (level) =>{
+    gamePlayground.classList.remove("easy","medium","custom");
+    if(level === "easy"){
+        gameInit(10,10,10);
+        gamePlayground.classList.add("easy");
+    }else if(level === "medium"){
+        gameInit(20,20,5);
+        gamePlayground.classList.add("medium");
+    }else{
+        gameInit(30,40,4);
+        gamePlayground.classList.add("custom");
+    }
+    fieldGenerator(playground);
+}
+
+gameStart.addEventListener("click", ()=>{
+    gameStartModal.classList.add("hidden");
+    gameInitLevel(gameLevel);
+})
+
+gameReset.addEventListener("click", ()=>{
+    gameInitLevel(gameLevel);
+})
+newGame.addEventListener("click", ()=>{
+    gameStartModal.classList.remove("hidden")
+})
+
+gameInit(10,10,10);
 fieldGenerator(playground);
 
 gamePlayground.addEventListener("contextmenu", function(e)
 {
     e.preventDefault();
 });
-
-let arr1 = [
-    {
-        name: "Wojtek",
-        age: 39
-    },
-    {
-        name: "Jurek",
-        age: 39
-    },
-    {
-        name: "Marek",
-        age: 38
-    }
-]
-let arr = [];
-
-arr = arr1.filter(el => el.age === 39);
-arr[0].name = "Wojciech";
-
-console.log(arr);
-console.log(arr1);

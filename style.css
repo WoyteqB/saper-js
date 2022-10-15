@@ -1,8 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
 *{
     padding: 0;
     margin: 0;
     box-sizing: border-box;
 }
+body{
+    font-family: 'Roboto', sans-serif;
+}
+
+.modal-container{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+.modal-container.hidden{
+    display: none;
+}
+.modal-container .modal{
+    background-color: #fff;
+    padding: 30px;
+    text-align: center;
+    border-radius: 10px;
+    border: orange solid 2px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
 main,
 header{
     display: flex;
@@ -12,9 +40,6 @@ header{
     text-align: center;
     padding: 20px;
 }
-header h1{
-    margin-bottom: 20px;
-}
 button.game-start{
     padding: 10px 20px;
     border: 1px solid darkorange;
@@ -22,26 +47,60 @@ button.game-start{
     color: #fff;
     font-size: 30px;
     font-weight: 500;
+    cursor: pointer;
 }
+button.game-start:hover{
+    background-color: darkorange;
+}
+.levels{
+    padding: 10px;
+}
+.levels button{
+    padding: 5px 15px;
+    width: 100px;
+    font-size: 18px;
+    border: #999 1px solid;
+    background-color: #eee;
+    margin: 5px;
+    cursor: pointer;
+}
+.levels button.picked{
+    background-color: #ccc;
+}
+.levels button:hover{
+    border-color: orange;
+}
+
 .game-board{
     display: grid;
     /* grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr; */
 }
 .game-board button{
-    height: 40px;
-    width: 40px;
+    height: 30px;
+    width: 30px;
     border-radius: none;
     border: 1px solid #999;
     background-color: #ccc;
     display: inline-block;
     cursor: pointer;
+    font-weight: 600;
+}
+.game-board.easy button{
+    height: 40px;
+    width: 40px;
+}
+.game-board.custom button{
+    height: 20px;
+    width: 20px;
 }
 .game-board button:hover{
-    background-color: #ccc;
+    background-color: rgb(192, 190, 190);
 }
-.game-board button.locked,
+.game-board button.locked{
+    background-color: orange;
+}
 .game-board button.locked:hover{
-    background-color:orange;
+    background-color:darkorange;
 }
 .game-board button.no-clicked,
 .game-board button.no-clicked:hover{
@@ -54,7 +113,61 @@ button.game-start{
 .game-board button.picked{
     background-color: #eee;
 }
+.game-board button.picked.near-bomb-1{
+    color: #666;
+}
+.game-board button.picked.near-bomb-2{
+    color: darkblue;
+}
+.game-board button.picked.near-bomb-3{
+    color: red;
+}
+.game-board button.picked.near-bomb-4,
+.game-board button.picked.near-bomb-5,
+.game-board button.picked.near-bomb-6,
+.game-board button.picked.near-bomb-7,
+.game-board button.picked.near-bomb-8{
+    color: darkred;
+}
 .game-board button.picked:hover{
     background-color: #eee;
     cursor: auto;
+}
+header .panel{
+    display: flex;
+    justify-content: space-between;
+    background-color: #eee;
+    min-width: 500px;
+    padding: 10px 20px;
+    align-items: center;
+}
+header .panel h1{
+    font-size: 24px;
+    line-height: 30px;
+    font-weight: 500;
+    text-transform: uppercase;
+    color: #333;
+}
+header .panel h1 i{
+    color: #eee;
+    background-color: orange;
+    padding: 5px;
+    border-radius: 5px;
+    margin-right: 5px;
+}
+header .panel .game button{
+    padding: 5px 10px;
+    font-size: 16px;
+    line-height: 20px;
+    border: 1px solid darkorange;
+    background-color: orange;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+header .panel .game button:hover{
+    background-color: darkorange;
+    color: white;
+}
+header .panel .game button:first-child{
+    margin-right: 10px;
 }
